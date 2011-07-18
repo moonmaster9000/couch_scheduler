@@ -6,7 +6,7 @@ Schedule your `CouchRest::Model::Base` documents with start and end dates. What 
 
 It's a gem called `couch_scheduler`. Install it in whatever way is appropriate to you.
 
-## Usage
+## Basics
 
 The gem includes a module, `CouchScheduler`, that you can mix into your documents.
 
@@ -21,9 +21,20 @@ For example, let's imagine that the we have an Article model:
 You can now provide start and end dates for your articles:
     
     @article = Article.create :title => "Couch Scheduler is simple and cool."
-    @article.start_date = Time.now
-    @article.end_date   = 6.days.from_now
+    @article.schedule_start = Time.now
+    @article.schedule_end   = 6.days.from_now
     @article.save
+
+## Validation
+
+`CouchSchedule` will use `ActiveModel` validation to ensure that your `schedule_end` is after your `schedule_start`:
+  
+    @article.schedule_start = Time.now
+    @article.schedule_end   = 2.days.ago
+    @article.save #==> false
+    @artile.errors #==> [:schedule_end, " must be greater than schedule_start"]
+
+## Uses?
 
 Now what can you do with these start and end dates? One use: publishing. 
 
