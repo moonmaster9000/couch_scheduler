@@ -21,18 +21,18 @@ For example, let's imagine that the we have an Article model:
 You can now provide start and end dates for your articles:
     
     @article = Article.create :title => "Couch Scheduler is simple and cool."
-    @article.schedule_start = Time.now
-    @article.schedule_end   = 6.days.from_now
+    @article.start = Time.now
+    @article.end   = 6.days.from_now
     @article.save
 
 ## Validation
 
-`CouchSchedule` will use `ActiveModel` validation to ensure that your `schedule_end` is after your `schedule_start`:
+`CouchSchedule` will use `ActiveModel` validation to ensure that your `end` is after your `start`:
   
-    @article.schedule_start = Time.now
-    @article.schedule_end   = 2.days.ago
+    @article.start = Time.now
+    @article.end   = 2.days.ago
     @article.save #==> false
-    @artile.errors #==> [:schedule_end, " must be greater than schedule_start"]
+    @artile.errors #==> [:end, " must be greater than start"]
 
 ## Uses?
 
