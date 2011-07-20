@@ -16,27 +16,30 @@ Feature: Scheduling
     Then I should not be able to save my document
     And I should get an error message that the end "must be greater than start"
 
-  @focus
   Scenario: Determining if a document is within it's schedule 
     Given an instance of a model that includes CouchScheduler
     When I set "start" to now
     And I set "end" to a day from now
-    Then "within_schedule?" should return true
+    Then "within_schedule?" should return true on my instance
     When I wait two days
-    Then "within_schedule?" should return false
+    Then "within_schedule?" should return false on my instance
   
-  @focus
   Scenario: Determining if a document is within it's schedule for a document that has only a start date
     Given an instance of a model that includes CouchScheduler
     When I set "start" to a day from now
-    Then "within_schedule?" should return false
+    Then "within_schedule?" should return false on my instance
     When I wait two days
-    Then "within_schedule?" should return true
+    Then "within_schedule?" should return true on my instance
 
-  @focus
   Scenario: Determining if a document is within it's schedule for a document that has only an end date
     Given an instance of a model that includes CouchScheduler
     When I set "end" to a day from now
-    Then "within_schedule?" should return true
+    Then "within_schedule?" should return true on my instance
     When I wait two days
-    Then "within_schedule?" should return false
+    Then "within_schedule?" should return false on my instance
+  
+  Scenario: Getting all documents that are within schedule on a given date 
+    Given there are several documents currently scheduled
+    And there are several documents scheduled in the future
+    Then "by_schedule" should return the documents currently within schedule
+    And "by_schedule" should not return the documents scheduled in the future
