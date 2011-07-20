@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rspec"
   s.add_development_dependency "couchrest_model_config"
   s.add_development_dependency "couch_publish"
-  s.add_development_dependency "couch_visible"
+  s.add_development_dependency "couch_visible", "~> 0.0.2"
   s.add_development_dependency "timecop"
   s.add_dependency "couchrest_model", "~> 1.0.0"
 end

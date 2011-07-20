@@ -26,7 +26,7 @@ GEM
     builder (2.1.2)
     couch_publish (0.0.2)
       memories (~> 0.3.3)
-    couch_visible (0.0.1)
+    couch_visible (0.0.2)
       couchrest_model (~> 1.0.0)
     couchrest (1.0.2)
       json (~> 1.5.1)
@@ -91,7 +91,7 @@ PLATFORMS
 DEPENDENCIES
   couch_publish
   couch_schedule!
-  couch_visible
+  couch_visible (~> 0.0.2)
   couchrest_model_config
   cucumber
   rspec
