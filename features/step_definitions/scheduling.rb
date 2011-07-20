@@ -79,3 +79,29 @@ Given /^there are several documents scheduled in the future$/ do
   @future_scheduled = []
   10.times { @future_scheduled << Document.create(:start => 1.day.from_now, :end => 4.days.from_now) }
 end
+
+Given /^there are (\d+) documents scheduled between now and tomorrow$/ do |num|
+  unless defined? Document
+    class Document < CouchRest::Model::Base
+      include CouchScheduler
+    end
+  end
+  num.to_i.times { Document.create :start => Time.now, :end => 1.day.from_now }
+end
+
+Given /^ther are (\d+) documents scheduled between tomorrow and two days from now$/ do |num|
+  num.to_i.times { Document.create :start => 1.day.from_now, :end => 2.days.from_now }
+end
+
+Then /^"([^"]*)" should return (\d+)$/ do |code, num|
+  eval("Document.#{code}").should == num.to_i
+end
+
+When /^I wait a day$/ do
+  Timecop.freeze 1.day.from_now
+end
+
+When /^I wait another day$/ do
+  Timecop.freeze 1.day.from_now
+end
+

@@ -40,6 +40,11 @@ module CouchScheduler
       by_couch_schedule options
     end
 
+    def count_by_schedule(options={})
+      result = by_schedule(options.merge(:reduce => true))['rows'].first
+      result ? result['value'] : 0
+    end
+
     private
     def format_time(t)
       [t.year, t.month - 1, t.day, 0, 0, 0]
