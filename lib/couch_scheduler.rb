@@ -1,2 +1,7 @@
 require 'couchrest_model'
+require 'couch_scheduler/time_massager'
+require 'couch_scheduler/map'
+require 'couch_scheduler/couch_visible_integration'
+require 'couch_scheduler/couch_publish_integration'
+require 'couch_scheduler/couch_publish_and_couch_visible_integration'
 require 'couch_scheduler/couch_scheduler'
