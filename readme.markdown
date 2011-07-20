@@ -86,6 +86,8 @@ If you include `CouchScheduler` into a model that already includes `CouchPublish
     # you can also query for the unpublished and currently scheduled documents like this:
     Article.by_schedule_and_unpublished
 
+You'll also get `count_schedule_and_published` and `count_schedule_and_unpublished` for free.
+
 ## CouchVisible Integration
 
 If you include `CouchScheduler` into a model that includes `CouchVisible`, you'll get the following map/reduce functions for free:

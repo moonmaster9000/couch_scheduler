@@ -44,13 +44,12 @@ Feature: Scheduling
     Then "by_schedule" should return the documents currently within schedule
     And "by_schedule" should not return the documents scheduled in the future
 
-  @focus
   Scenario: Counting documents
     Given there are 3 documents scheduled between now and tomorrow
     And ther are 10 documents scheduled between tomorrow and two days from now
-    Then "count_by_schedule" should return 3
-    And "count_by_schedule :key => 1.day.from_now" should return 10
+    Then "count_schedule" should return 3
+    And "count_schedule :key => 1.day.from_now" should return 10
     When I wait a day
-    Then "count_by_schedule" should return 10
+    Then "count_schedule" should return 10
     When I wait another day
-    Then "count_by_schedule" should return 0
+    Then "count_schedule" should return 0

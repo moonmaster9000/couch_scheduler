@@ -2,6 +2,7 @@ $LOAD_PATH.unshift './lib'
 
 require 'couch_scheduler'
 require 'couchrest_model_config'
+require 'couch_publish'
 require 'timecop'
 
 CouchRest::Model::Config.edit do
