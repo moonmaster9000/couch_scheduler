@@ -36,6 +36,10 @@ module CouchScheduler
     if defined?(CouchVisible) && base.ancestors.include?(CouchVisible)
       base.send :include, CouchVisibleIntegration
     end
+
+    if defined?(CouchVisible) && base.ancestors.include?(CouchVisible) && defined?(CouchPublish) && base.ancestors.include?(CouchPublish)
+      base.send :include, CouchVisibleCouchPublishIntegration
+    end
   end
 
   module ClassMethods
@@ -59,6 +63,95 @@ module CouchScheduler
     private
     def format_time(t)
       [t.year, t.month - 1, t.day, 0, 0, 0]
+    end
+  end
+
+  module CouchVisibleCouchPublishIntegration
+    def self.included(base)
+      base.extend ClassMethods
+      base.view_by :couch_schedule_and_published_and_shown, :map => %{
+        function(doc){
+          if (doc["couchrest-type"] == "#{base}" && doc.couch_visible === true && doc.milestone_memories.length > 0){
+            var start = doc.start ? new Date(doc.start) : new Date(2011, 0, 1, 0, 0, 0, 0)
+            var end   = doc.end   ? new Date(doc.end  ) : new Date(2025, 0, 1, 0, 0, 0, 0)
+            
+            while(start < end){
+              emit(
+                [
+                  start.getFullYear(), 
+                  start.getMonth(), 
+                  start.getDate(), 
+                  0, 
+                  0,
+                  0
+                ], 
+                null
+              );
+              start.setDate(start.getDate() + 1)
+            }
+          }
+        }
+      }, :reduce => '_count'
+
+      base.view_by :couch_schedule_and_published_and_hidden, :map => %{
+        function(doc){
+          if (doc["couchrest-type"] == "#{base}" && doc.couch_visible === false && doc.milestone_memories.length === 0){
+            var start = doc.start ? new Date(doc.start) : new Date(2011, 0, 1, 0, 0, 0, 0)
+            var end   = doc.end   ? new Date(doc.end  ) : new Date(2025, 0, 1, 0, 0, 0, 0)
+            
+            while(start < end){
+              emit(
+                [
+                  start.getFullYear(), 
+                  start.getMonth(), 
+                  start.getDate(), 
+                  0, 
+                  0,
+                  0
+                ], 
+                null
+              );
+              start.setDate(start.getDate() + 1)
+            }
+          }
+        }
+      }, :reduce => '_count'
+    end
+
+    module ClassMethods
+      def by_schedule_and_published_and_shown(options={})
+        if !options[:startkey] && !options[:key]
+          options = {:key => format_time(Time.now), :reduce => false}.merge options
+        end
+        
+        [:key, :startkey, :endkey].each do |option|
+          options[option] = format_time options[option] if options[option].kind_of?(Time)
+        end
+
+        by_couch_schedule_and_shown options
+      end
+
+      def by_schedule_and_published_and_hidden(options={})
+        if !options[:startkey] && !options[:key]
+          options = {:key => format_time(Time.now), :reduce => false}.merge options
+        end
+        
+        [:key, :startkey, :endkey].each do |option|
+          options[option] = format_time options[option] if options[option].kind_of?(Time)
+        end
+
+        by_couch_schedule_and_hidden options
+      end
+
+      def count_schedule_and_published_and_shown(options={})
+        result = by_schedule_and_published_and_shown(options.merge(:reduce => true))['rows'].first
+        result ? result['value'] : 0
+      end
+
+      def count_schedule_and_published_and_hidden(options={})
+        result = by_schedule_and_published_and_hidden(options.merge(:reduce => true))['rows'].first
+        result ? result['value'] : 0
+      end
     end
   end
 

@@ -70,3 +70,5 @@ end
 Then /^I should receive (\d+)$/ do |count|
   @result.should == count.to_i
 end
+
+
