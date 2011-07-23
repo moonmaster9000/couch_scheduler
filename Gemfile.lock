@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    couch_schedule (0.0.0)
+    couch_scheduler (0.0.1)
       couchrest_model (~> 1.0.0)
 
 GEM
@@ -90,7 +90,7 @@ PLATFORMS
 
 DEPENDENCIES
   couch_publish
-  couch_schedule!
+  couch_scheduler!
   couch_visible (~> 0.0.2)
   couchrest_model_config
   cucumber

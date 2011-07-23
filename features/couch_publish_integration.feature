@@ -7,14 +7,14 @@ Feature: CouchPublish Integration
     Given an Article model that includes CouchPublish and CouchVisible
     When I create several published articles scheduled now and in the future
     And I create several unpublished articles scheduled now and in the future
-    When I call "Article.by_schedule_and_published"
+    When I call "Article.by_schedule :published => true"
     Then I should receive the published documents scheduled now
-    When I call "Article.by_schedule_and_unpublished"
+    When I call "Article.by_schedule :unpublished => true"
     Then I should receive the unpublished documents scheduled now
     When I wait till the future
-    And I call "Article.by_schedule_and_published"
+    And I call "Article.by_schedule :published => true"
     Then I should receive the published documents scheduled in the future
-    When I call "Article.by_schedule_and_unpublished"
+    When I call "Article.by_schedule :unpublished => true"
     Then I should receive the unpublished documents scheduled in the future
  
   @focus
@@ -24,12 +24,12 @@ Feature: CouchPublish Integration
     And I create 3 published articles schedule in the future
     And I create 4 unpublished articles scheduled now
     And I create 7 unpublished articles schedule in the future
-    When I call "Article.count_schedule_and_published"
+    When I call "Article.count_schedule :published => true"
     Then I should receive 2
-    When I call "Article.count_schedule_and_unpublished"
+    When I call "Article.count_schedule :unpublished => true"
     Then I should receive 4
     When I wait till the future
-    And I call "Article.count_schedule_and_published"
+    And I call "Article.count_schedule :published => true"
     Then I should receive 3
-    When I call "Article.count_schedule_and_unpublished"
+    When I call "Article.count_schedule :unpublished => true"
     Then I should receive 7   

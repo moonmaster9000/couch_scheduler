@@ -7,20 +7,17 @@ module CouchScheduler
     end
 
     module ClassMethods
-      def by_schedule_and_shown(options={})
-        by_couch_schedule_and_shown CouchScheduler::TimeMassager.massage(options)
-      end
+      def by_schedule(options={})
+        shown = options.delete :shown
+        hidden = options.delete :hidden
 
-      def by_schedule_and_hidden(options={})
-        by_couch_schedule_and_hidden CouchScheduler::TimeMassager.massage(options)
-      end
-
-      def count_schedule_and_shown(options={})
-        count_by_map :by_schedule_and_shown, options
-      end
-
-      def count_schedule_and_hidden(options={})
-        count_by_map :by_schedule_and_hidden, options
+        if shown == true || hidden == false
+          by_couch_schedule_and_shown CouchScheduler::Options.new(options).to_hash
+        elsif hidden == true || shown == false
+          by_couch_schedule_and_hidden CouchScheduler::Options.new(options).to_hash
+        else
+          super
+        end
       end
     end
   end

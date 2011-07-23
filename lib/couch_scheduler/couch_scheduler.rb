@@ -21,7 +21,7 @@ module CouchScheduler
 
   module ClassMethods
     def by_schedule(options={})
-      by_couch_schedule CouchScheduler::TimeMassager.massage(options)
+      by_couch_schedule CouchScheduler::Options.new(options).to_hash
     end
 
     def count_schedule(options={})
