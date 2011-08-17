@@ -48,28 +48,30 @@ Let's imagine that you only to display this article on your website between the 
 
     @article.within_schedule? #==> false
 
-### Query (.by_schedule)
+### Query (.map_within_schedule)
 
-You can also query the databases for all of the articles currently within their schedule via `by_schedule`:
+You can also query the databases for all of the articles currently within their schedule via `map_within_schedule`:
 
-    Article.by_schedule
+    Article.map_within_schedule!
 
-`by_schedule` simply queries a map with a default key of `Time.now.start_of_day`. You can pass any options to it that you would normally pass to a map function in `CouchRest::Model::Base`:
+`map_within_schedule` simply queries a map with a default key of `Time.now.start_of_day`. You can pass any options to it that you would normally pass to a map function in `CouchRest::Model::Base`:
 
-    Article.by_schedule.key(10.days.from_now)
+    Article.map_within_schedule.key(10.days.from_now.to_date).get!
       #==> all the articles active 10 days from now
 
-    Article.by_schedule.startkey(Time.now).endkey(10.days.from_now)
-      #==> all the articles active between now and 10 days from now
+    Article.map_within_schedule.startkey(Time.now.to_date).endkey(10.days.from_now.to_date).get!
+      #==> all the articles active between today and 10 days from now
 
-`CouchVisible` also provides you with a convenience method for getting the count of the `by_schedule` map/reduce:
+If you're coming from a regular `CouchRest::Model::Base` background, you've likely not seen this lazy, chainable API before. `CouchScheduler` utilizes `CouchView` to create this functionality. Checkout the `couch_view` gem at http://github.com/moonmaster9000/couch_view
+
+`CouchScheduler` also provides you with a convenience method for getting the count of the `map_within_schedule` map/reduce:
     
-    Article.count_schedule
+    Article.count_within_schedule!
       #==> the number of documents that are currently within their schedule
 
-Like `by_schedule`, `count_schedule` supports all the usual map/reduce options:
+Like `map_within_schedule`, `count_within_schedule` supports all the usual map/reduce options:
 
-    Article.count_schedule.key(10.days.from_now)
+    Article.count_within_schedule.key(10.days.from_now).get!
       #==> the count of all articles that are within their start/end dates 10 days from now
 
 
@@ -86,37 +88,37 @@ If you include `CouchScheduler` into a model that already includes `CouchPublish
     end
 
     # you can query for all published and currently scheduled documents like this:
-    Article.by_schedule.published
+    Article.map_within_schedule.published.get!
       #==> returns all documents that are published and currently within their schedule
     
     # you can also query for the unpublished and currently scheduled documents like this:
-    Article.by_schedule.unpublished
+    Article.map_within_schedule.unpublished.get!
 
-You can also pass use the "published" and "unpublished" query proxy methods on the `count_schedule` method.
+You can also pass use the "published" and "unpublished" query proxy methods on the `count_within_schedule` method.
 
 
 ## CouchVisible Integration
 
 If you include `CouchScheduler` into a model that includes `CouchVisible`, you'll get the following map/reduce functions for free:
 
-    Article.by_schedule.shown
+    Article.map_within_schedule.shown.get!
       #==> all articles that are currently within their start and end dates and are shown
 
-    Article.by_schedule.hidden
+    Article.map_within_schedule.hidden.get!
       #==> all articles that are currently within their start and end dates and are hidden
 
-    Article.count_schedule.shown
-    Article.count_schedule.hidden
+    Article.count_within_schedule.shown.get!
+    Article.count_within_schedule.hidden.get!
 
 
 ## CouchPublish/CouchVisible integration
 
 If you include `CouchScheduler` into a model that includes both `CouchVisible` and `CouchPublish`, you can pass `:published => true`, `:unpublished => true`, `:shown => true`, `:hidden => true` to your schedule query methods:
 
-    Article.by_schedule.published.shown
-    Article.by_schedule.unpublished.hidden
-    Article.count_schedule.published.shown
-    Article.count_schedule.unpublished.hidden
+    Article.map_within_schedule.published.shown.get!
+    Article.map_within_schedule.unpublished.hidden.get!
+    Article.count_within_schedule.published.shown.get!
+    Article.count_within_schedule.unpublished.hidden.get!
  
 
 ## LICENSE

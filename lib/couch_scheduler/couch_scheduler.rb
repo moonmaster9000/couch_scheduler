@@ -7,14 +7,16 @@ module CouchScheduler
     base.property :start, Date
     base.property :end, Date
     base.validate :validate_start_and_end
-    base.couch_view :within_couch_schedule do
-      map CouchScheduler::Map
-    end
-
     base.extend ClassMethods
-#     if defined?(CouchPublish) && base.ancestors.include?(CouchPublish)
-#       base.send :include, CouchPublishIntegration
-#     end
+
+    
+    if defined?(CouchPublish) && base.ancestors.include?(CouchPublish)
+      base.send :include, CouchPublishIntegration
+    else
+      base.couch_view :within_couch_schedule do
+        map CouchScheduler::Map
+      end
+    end
 # 
 #     if defined?(CouchVisible) && base.ancestors.include?(CouchVisible)
 #       base.send :include, CouchVisibleIntegration
