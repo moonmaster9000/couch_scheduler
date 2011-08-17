@@ -17,3 +17,7 @@ end
 Given /^a model that includes CouchScheduler:$/ do |code|
   eval code
 end
+
+Given /^the date is .*:$/ do |code|
+  eval code
+end

@@ -182,17 +182,29 @@ Feature: Scheduling
       """
         @future_articles = [].tap {|a| 10.times { a << Article.create(:start => 2.days.from_now, :end => 3.days.from_now) }}
         @future_articles.length.should == 10
+        Article.all.count.should == 20
       """
 
-    Then "by_schedule" should return the documents currently within schedule:
+    Then "map_within_schedule!" should return the documents currently within schedule:
       """
-        Article.by_schedule.all? {|a| @current_articles.collect(&:id).include? a.id }
+        Article.map_within_schedule!.all? {|a| @current_articles.collect(&:id).include? a.id }
       """
 
-    And "by_schedule" should not return the documents scheduled in the future:
+    And "map_within_schedule!" should not return the documents scheduled in the future:
       """
-        Article.by_schedule.all? {|a| !@future_articles.collect(&:id).include? a.id }
+        Article.map_within_schedule!.all? {|a| !@future_articles.collect(&:id).include? a.id }
       """
+    
+    Then "map_within_schedule.key(2.days.from_now.to_date).get!" should return the documents scheduled in the future:
+      """
+        Article.map_within_schedule.key(2.days.from_now.to_date).get!.all? {|a| @future_articles.collect(&:id).include? a.id }
+      """
+
+    And "map_within_schedule.key(2.days.from_now.to_date).get!" should not return the documents currently scheduled:
+      """
+        Article.map_within_schedule.key(2.days.from_now.to_date).get!.all? {|a| !@current_articles.collect(&:id).include? a.id }
+      """
+
 
   Scenario: Counting documents
     
@@ -213,14 +225,14 @@ Feature: Scheduling
         10.times { Article.create :start => 1.day.from_now, :end => 2.days.from_now }
       """
 
-    Then "count_schedule" should return 3:
+    Then "count_within_schedule!" should return 3:
       """
-        Article.count_schedule.should == 3
+        Article.count_within_schedule!.should == 3
       """
 
-    And "count_schedule :key => 1.day.from_now" should return 10:
+    And "count_within_schedule.key(1.day.from_now.to_date).get!" should return 10:
       """
-        Article.count_schedule(:key => 1.day.from_now).should == 10
+        Article.count_within_schedule.key(1.day.from_now.to_date).get!.should == 10
       """
 
     When I wait a day:
@@ -228,9 +240,9 @@ Feature: Scheduling
         Timecop.freeze 1.day.from_now
       """
 
-    Then "count_schedule" should return 10:
+    Then "count_within_schedule!" should return 10:
       """
-        Article.count_schedule.should == 10
+        Article.count_within_schedule!.should == 10
       """
 
     When I wait another day:  
@@ -238,7 +250,57 @@ Feature: Scheduling
         Timecop.freeze 1.day.from_now
       """
 
-    Then "count_schedule" should return 0:
+    Then "count_within_schedule!" should return 0:
       """
-        Article.count_schedule.should == 0
+        Article.count_within_schedule!.should == 0
+      """
+
+
+  Scenario: Generating the correct date key index for scheduled documents
+    
+    Given a model that includes CouchScheduler:
+      """
+        class Article < CouchRest::Model::Base
+          include CouchScheduler
+        end
+      """
+    
+    And the date is January 1st, 2011:
+      """
+        Timecop.freeze Time.parse("2011/01/01")
+      """
+
+    And there are 3 documents scheduled between now and one month and a day from now:
+      """
+        3.times { Article.create :start => Time.now, :end => (1.month.from_now + 1.day)}
+      """
+
+    And there are 10 documents scheduled between one month and a day from now and two months from now:
+      """
+        10.times { Article.create :start => (1.month.from_now + 1.day), :end =>  2.months.from_now }
+      """
+    
+    Then "count_within_schedule!" should return 3:
+      """
+        Article.count_within_schedule!.should == 3
+      """
+
+    And "count_within_schedule.key('2011-01-01').get!" should return 3:
+      """
+        Article.count_within_schedule.key('2011-01-01').get!.should == 3
+      """
+
+    And "count_within_schedule.key('2011-02-02).get!" should return 10:
+      """
+        Article.count_within_schedule.key('2011-02-02').get!.should == 10
+      """
+
+    When I wait a month and a day:
+      """
+        Timecop.freeze(1.month.from_now + 1.day)
+      """
+
+    Then "count_within_schedule!" should return 10:
+      """
+        Article.count_within_schedule!.should == 10
       """

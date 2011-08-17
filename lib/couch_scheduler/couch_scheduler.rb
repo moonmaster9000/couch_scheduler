@@ -1,37 +1,45 @@
 module CouchScheduler
   def self.included(base)
-    base.property :start, Time
-    base.property :end, Time
+    unless base.ancestors.include?(CouchView)
+      base.send :include, CouchView
+    end
+
+    base.property :start, Date
+    base.property :end, Date
     base.validate :validate_start_and_end
-    base.view_by :couch_schedule, :map => Map.new(base).to_s, :reduce => '_count'
+    base.couch_view :within_couch_schedule do
+      map CouchScheduler::Map
+    end
+
     base.extend ClassMethods
-
-    if defined?(CouchPublish) && base.ancestors.include?(CouchPublish)
-      base.send :include, CouchPublishIntegration
-    end
-
-    if defined?(CouchVisible) && base.ancestors.include?(CouchVisible)
-      base.send :include, CouchVisibleIntegration
-    end
-
-    if defined?(CouchVisible) && base.ancestors.include?(CouchVisible) && defined?(CouchPublish) && base.ancestors.include?(CouchPublish)
-      base.send :include, CouchVisibleCouchPublishIntegration
-    end
+#     if defined?(CouchPublish) && base.ancestors.include?(CouchPublish)
+#       base.send :include, CouchPublishIntegration
+#     end
+# 
+#     if defined?(CouchVisible) && base.ancestors.include?(CouchVisible)
+#       base.send :include, CouchVisibleIntegration
+#     end
+# 
+#     if defined?(CouchVisible) && base.ancestors.include?(CouchVisible) && defined?(CouchPublish) && base.ancestors.include?(CouchPublish)
+#       base.send :include, CouchVisibleCouchPublishIntegration
+#     end
   end
 
   module ClassMethods
-    def by_schedule(options={})
-      by_couch_schedule CouchScheduler::Options.new(options).to_hash
+    def map_within_schedule!
+      map_within_schedule.get!
     end
 
-    def count_schedule(options={})
-      count_by_map :by_schedule, options
+    def count_within_schedule!
+      count_within_schedule.get!
     end
 
-    private
-    def count_by_map(map, options)
-      result = self.send(map, options.merge(:reduce => true))['rows'].first
-      result ? result['value'] : 0
+    def map_within_schedule
+      map_within_couch_schedule.key(Time.now.to_date)
+    end
+
+    def count_within_schedule
+      count_within_couch_schedule.key(Time.now.to_date)
     end
   end
 
