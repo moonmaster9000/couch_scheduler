@@ -10,7 +10,7 @@ module CouchScheduler
               var start = new Date(doc.start)
               start.setDate(start.getDate() + 1)
             } else {
-              var start = new Date(2011, 0, 1, 0, 0, 0, 0)
+              var start = new Date()
             }
 
             if (doc.end){
