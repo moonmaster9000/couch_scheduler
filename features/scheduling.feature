@@ -130,7 +130,9 @@ Feature: Scheduling
       """
 
 
+  @focus
   Scenario: Determining if a document is within it's schedule for a document that has only an end date
+
     Given an instance of a model that includes CouchScheduler:
       """
         class Article < CouchRest::Model::Base
@@ -161,6 +163,7 @@ Feature: Scheduling
       """
   
 
+  @focus
   Scenario: Getting all documents that are within schedule on a given date 
 
     Given an instance of a model that includes CouchScheduler:
@@ -206,6 +209,7 @@ Feature: Scheduling
       """
 
 
+  @focus
   Scenario: Counting documents
     
     Given a model that includes CouchScheduler:
@@ -255,7 +259,7 @@ Feature: Scheduling
         Article.count_within_schedule!.should == 0
       """
 
-
+  @focus
   Scenario: Generating the correct date key index for scheduled documents
     
     Given a model that includes CouchScheduler:
@@ -293,6 +297,51 @@ Feature: Scheduling
     And "count_within_schedule.key('2011-02-02).get!" should return 10:
       """
         Article.count_within_schedule.key('2011-02-02').get!.should == 10
+      """
+
+    When I wait a month and a day:
+      """
+        Timecop.freeze(1.month.from_now + 1.day)
+      """
+
+    Then "count_within_schedule!" should return 10:
+      """
+        Article.count_within_schedule!.should == 10
+      """
+
+  @focus
+  Scenario: Default start within the "schedule" index to the current date
+    
+    Given a model that includes CouchScheduler:
+      """
+        class Article < CouchRest::Model::Base
+          include CouchScheduler
+        end
+      """
+    
+    And there are 3 documents scheduled to end one month and a day from now:
+      """
+        3.times { Article.create :end => (1.month.from_now + 1.day)}
+      """
+
+    And there are 10 documents scheduled to start one month and a day from now:
+      """
+        10.times { Article.create :start => (1.month.from_now + 1.day)}
+      """
+    
+    Then "count_within_schedule!" should return 3:
+      """
+        Article.count_within_schedule!.should == 3
+      """
+
+    And "count_within_schedule.key(Time.now.to_date).get!" should return 3:
+      """
+        Article.count_within_schedule.key(Time.now.to_date).get!.should == 3
+      """
+
+    And "count_within_schedule.key((1.month.from_now + 1.day).to_date).get!" should return 10:
+      """
+        Article.count_within_schedule.key((1.month.from_now + 1.day).to_date).get!.should == 10
       """
 
     When I wait a month and a day:

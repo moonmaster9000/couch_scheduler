@@ -7,17 +7,17 @@ module CouchScheduler
         function(doc){
           if (#{conditions}){
             if (doc.start){
-              var start = new Date(doc.start)
-              start.setDate(start.getDate() + 1)
+              startDate = doc.start.replace(/-/g, '/')
+              var start = new Date(startDate)
             } else {
               var start = new Date()
             }
 
             if (doc.end){
-              var end = new Date(doc.end)
-              end.setDate(end.getDate() + 1)
+              endDate = doc.end.replace(/-/g, '/')
+              var end = new Date(endDate)
             } else {
-              var end = new Date(2025, 0, 1, 0, 0, 0, 0)
+              var end = new Date("2025/01/01")
             }
             
             while(start < end){
