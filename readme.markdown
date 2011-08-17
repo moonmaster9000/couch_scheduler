@@ -56,10 +56,10 @@ You can also query the databases for all of the articles currently within their 
 
 `by_schedule` simply queries a map with a default key of `Time.now.start_of_day`. You can pass any options to it that you would normally pass to a map function in `CouchRest::Model::Base`:
 
-    Article.by_schedule :key => 10.days.from_now
+    Article.by_schedule.key(10.days.from_now)
       #==> all the articles active 10 days from now
 
-    Article.by_schedule :startkey => Time.now, :endkey => 10.days.from_now
+    Article.by_schedule.startkey(Time.now).endkey(10.days.from_now)
       #==> all the articles active between now and 10 days from now
 
 `CouchVisible` also provides you with a convenience method for getting the count of the `by_schedule` map/reduce:
@@ -69,7 +69,7 @@ You can also query the databases for all of the articles currently within their 
 
 Like `by_schedule`, `count_schedule` supports all the usual map/reduce options:
 
-    Article.count_schedule :key => 10.days.from_now
+    Article.count_schedule.key(10.days.from_now)
       #==> the count of all articles that are within their start/end dates 10 days from now
 
 
@@ -86,37 +86,37 @@ If you include `CouchScheduler` into a model that already includes `CouchPublish
     end
 
     # you can query for all published and currently scheduled documents like this:
-    Article.by_schedule :published => true
+    Article.by_schedule.published
       #==> returns all documents that are published and currently within their schedule
     
     # you can also query for the unpublished and currently scheduled documents like this:
-    Article.by_schedule :unpublished => true
+    Article.by_schedule.unpublished
 
-You can also pass `:published => true` and `:unpublished => true` to the `count_schedule` method.
+You can also pass use the "published" and "unpublished" query proxy methods on the `count_schedule` method.
 
 
 ## CouchVisible Integration
 
 If you include `CouchScheduler` into a model that includes `CouchVisible`, you'll get the following map/reduce functions for free:
 
-    Article.by_schedule :shown => true
+    Article.by_schedule.shown
       #==> all articles that are currently within their start and end dates and are shown
 
-    Article.by_schedule :hidden => true
+    Article.by_schedule.hidden
       #==> all articles that are currently within their start and end dates and are hidden
 
-    Article.count_schedule :shown  => true
-    Article.count_schedule :hidden => true
+    Article.count_schedule.shown
+    Article.count_schedule.hidden
 
 
 ## CouchPublish/CouchVisible integration
 
 If you include `CouchScheduler` into a model that includes both `CouchVisible` and `CouchPublish`, you can pass `:published => true`, `:unpublished => true`, `:shown => true`, `:hidden => true` to your schedule query methods:
 
-    Article.by_schedule    :published   => true, :shown  => true
-    Article.by_schedule    :unpublished => true, :hidden => true
-    Article.count_schedule :published   => true, :shown  => true
-    Article.count_schedule :unpublished => true, :hidden => true 
+    Article.by_schedule.published.shown
+    Article.by_schedule.unpublished.hidden
+    Article.count_schedule.published.shown
+    Article.count_schedule.unpublished.hidden
  
 
 ## LICENSE
