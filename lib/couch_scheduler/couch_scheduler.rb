@@ -9,8 +9,9 @@ module CouchScheduler
     base.validate :validate_start_and_end
     base.extend ClassMethods
 
-    
-    if defined?(CouchPublish) && base.ancestors.include?(CouchPublish)
+    if defined?(CouchVisible) && base.ancestors.include?(CouchVisible) && defined?(CouchPublish) && base.ancestors.include?(CouchPublish)
+      base.send :include, CouchVisibleCouchPublishIntegration
+    elsif defined?(CouchPublish) && base.ancestors.include?(CouchPublish)
       base.send :include, CouchPublishIntegration
     elsif defined?(CouchVisible) && base.ancestors.include?(CouchVisible)
       base.send :include, CouchVisibleIntegration
@@ -19,9 +20,7 @@ module CouchScheduler
         map CouchScheduler::Map
       end
     end
-#     if defined?(CouchVisible) && base.ancestors.include?(CouchVisible) && defined?(CouchPublish) && base.ancestors.include?(CouchPublish)
-#       base.send :include, CouchVisibleCouchPublishIntegration
-#     end
+
   end
 
   module ClassMethods
