@@ -15,4 +15,10 @@ end
 Before do
   CouchRest::Model::Config.default_database.recreate!
   Timecop.return
+
+  Object.class_eval do
+    if defined? Article
+      remove_const "Article"
+    end
+  end
 end

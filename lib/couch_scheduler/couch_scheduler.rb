@@ -12,16 +12,13 @@ module CouchScheduler
     
     if defined?(CouchPublish) && base.ancestors.include?(CouchPublish)
       base.send :include, CouchPublishIntegration
+    elsif defined?(CouchVisible) && base.ancestors.include?(CouchVisible)
+      base.send :include, CouchVisibleIntegration
     else
       base.couch_view :within_couch_schedule do
         map CouchScheduler::Map
       end
     end
-# 
-#     if defined?(CouchVisible) && base.ancestors.include?(CouchVisible)
-#       base.send :include, CouchVisibleIntegration
-#     end
-# 
 #     if defined?(CouchVisible) && base.ancestors.include?(CouchVisible) && defined?(CouchPublish) && base.ancestors.include?(CouchPublish)
 #       base.send :include, CouchVisibleCouchPublishIntegration
 #     end
