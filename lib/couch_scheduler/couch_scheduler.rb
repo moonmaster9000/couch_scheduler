@@ -9,18 +9,17 @@ module CouchScheduler
     base.validate :validate_start_and_end
     base.extend ClassMethods
 
-    if defined?(CouchVisible) && base.ancestors.include?(CouchVisible) && defined?(CouchPublish) && base.ancestors.include?(CouchPublish)
-      base.send :include, CouchVisibleCouchPublishIntegration
-    elsif defined?(CouchPublish) && base.ancestors.include?(CouchPublish)
-      base.send :include, CouchPublishIntegration
-    elsif defined?(CouchVisible) && base.ancestors.include?(CouchVisible)
-      base.send :include, CouchVisibleIntegration
-    else
-      base.couch_view :within_couch_schedule do
-        map CouchScheduler::Map
-      end
+    base.couch_view :within_couch_schedule do
+      map CouchScheduler::Map
     end
 
+    if defined?(CouchPublish) && base.ancestors.include?(CouchPublish)
+      base.send :include, CouchPublishIntegration
+    end
+    
+    if defined?(CouchVisible) && base.ancestors.include?(CouchVisible)
+      base.send :include, CouchVisibleIntegration
+    end
   end
 
   module ClassMethods
@@ -45,8 +44,8 @@ module CouchScheduler
     start_valid = true
     end_valid   = true
 
-    start_valid = Time.now >= self.start  if self.start
-    end_valid   = Time.now < self.end     if self.end
+    start_valid = Time.now.to_date >= self.start  if self.start
+    end_valid   = Time.now.to_date < self.end     if self.end
 
     start_valid && end_valid
   end

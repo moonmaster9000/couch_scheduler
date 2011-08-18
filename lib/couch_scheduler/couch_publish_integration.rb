@@ -9,4 +9,3 @@ module CouchScheduler
     end
   end
 end
-

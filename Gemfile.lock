@@ -1,8 +1,8 @@
 PATH
   remote: .
   specs:
-    couch_scheduler (0.1.0)
-      couch_view (~> 0.0.2)
+    couch_scheduler (0.2.0)
+      couch_view (~> 0.0.3)
       couchrest_model (~> 1.0.0)
 
 GEM
@@ -27,7 +27,7 @@ GEM
     builder (2.1.2)
     couch_publish (0.0.3)
       memories (~> 0.3.6)
-    couch_view (0.0.2)
+    couch_view (0.0.3)
       couchrest (= 1.0.1)
       couchrest_model (~> 1.0.0)
     couch_visible (0.0.2)

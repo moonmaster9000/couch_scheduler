@@ -17,12 +17,12 @@ Feature: Scheduling
 
     When I set "start" to now:
       """
-        @article.start = Time.now
+        @article.start = Time.now.to_date
       """
 
     And I set "end" to a day from now:
       """
-        @article.end = 1.day.from_now
+        @article.end = 1.day.from_now.to_date
       """
 
     Then I should be able to save my document:
@@ -46,12 +46,12 @@ Feature: Scheduling
 
     When I set "start" to now:
       """
-        @article.start = Time.now
+        @article.start = Time.now.to_date
       """
 
     And I set "end" to yesterday:
       """
-        @article.end = 1.day.ago
+        @article.end = 1.day.ago.to_date
       """
 
     Then I should not be able to save my document:
@@ -75,12 +75,12 @@ Feature: Scheduling
 
     When I set "start" to now:
       """
-        @article.start = Time.now
+        @article.start = Time.now.to_date
       """
 
     And I set "end" to tomorrow:
       """
-        @article.end = 1.day.from_now
+        @article.end = 1.day.from_now.to_date
       """
 
     Then "within_schedule?" should return true on my instance:
@@ -111,7 +111,7 @@ Feature: Scheduling
 
     When I set "start" to now:
       """
-        @article.start = Time.now
+        @article.start = Time.now.to_date
       """
     
     Then "within_schedule?" should return true on my instance:
@@ -144,7 +144,7 @@ Feature: Scheduling
 
     When I set "end" to tomorrow:
       """
-        @article.end = 1.day.from_now
+        @article.end = 1.day.from_now.to_date
       """
     
     Then "within_schedule?" should return true on my instance:
