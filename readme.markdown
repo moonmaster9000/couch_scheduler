@@ -77,7 +77,7 @@ Like `map_within_schedule`, `count_within_schedule` supports all the usual map/r
 
 ## CouchPublish Integration
 
-If you include `CouchScheduler` into a model that already includes `CouchPublish`, then you can pass `:publish => true` and `:unpublish => true`:
+If you include `CouchScheduler` into a model that already includes `CouchPublish`, then you can use the `publish` and `unpublish` proxy methods:
     
     # with a class definition like this:
     class Article < CouchRest::Model::Base
@@ -113,7 +113,7 @@ If you include `CouchScheduler` into a model that includes `CouchVisible`, you'l
 
 ## CouchPublish/CouchVisible integration
 
-If you include `CouchScheduler` into a model that includes both `CouchVisible` and `CouchPublish`, you can pass `:published => true`, `:unpublished => true`, `:shown => true`, `:hidden => true` to your schedule query methods:
+If you include `CouchScheduler` into a model that includes both `CouchVisible` and `CouchPublish`, you can use the `published`, `unpublished`, `shown`, `hidden` to your schedule query methods:
 
     Article.map_within_schedule.published.shown.get!
     Article.map_within_schedule.unpublished.hidden.get!
