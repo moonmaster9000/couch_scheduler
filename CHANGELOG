@@ -1,3 +1,6 @@
+v0.2.2
+  -- internal changes; upgraded to couch_view 0.1.1; namspaced internal condition modules
+
 v0.2.1
   -- refactored internals to use couch_view 0.0.3 support for chainable conditions on maps defined multiple times
   -- fixed a bug where "within_schedule?" ended early thanks to time zones
