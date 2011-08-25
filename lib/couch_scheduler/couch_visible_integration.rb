@@ -3,7 +3,7 @@ module CouchScheduler
     def self.included(base)
       base.couch_view :within_couch_schedule do
         map CouchScheduler::Map do
-          conditions ::Shown, ::Hidden
+          conditions CouchScheduler::Conditions::Shown, CouchScheduler::Conditions::Hidden
         end
       end
     end
